@@ -23,6 +23,8 @@ public class solverNet {
 			if(!started)
 			{
 				puzzle.toNet(this);
+				maxChanges = 2*bits.size() + (int) (Math.ceil(Math.log(bits.size())/Math.log(2))) +1;
+				//assuming that comstraining it does not increase the number of bitnodes
 				nextGates = new int[gates.size()];
 				for(int i=0;i<gates.size();i++)
 				{
@@ -92,7 +94,7 @@ public class solverNet {
 			}
 		}while(true);
 	}
-	
+
 	void addGate(gateNode gate,boolean complex)
 	{
 		if(!complex)   //this block is implemented by complexGate.insert
@@ -109,7 +111,7 @@ public class solverNet {
 		gates.add(gate);
 		gateLines+=gate.width;
 	}
-	
+
 	//should this function be here? this class has no other setters because it is tightly integrated with ProblemFormat, meaning bits is public
 	public void addBit(bitNode bit)
 	{
