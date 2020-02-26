@@ -123,10 +123,14 @@ public class solverNet {
 		return gate.bits[j];
 	}
 
-	public double getGateWeight(int i, int j) {
+	public double[] getGateWeight(int i, int j,boolean equal) {
 		// TODO Auto-generated method stub
 		gateNode gate = gates.get(i);
-		return gate.weights[j];
+		if(equal)
+		{
+			return gate.weights[2*j];
+		}
+		return gate.weights[2*j + 1];
 	}
 
 	public boolean getBitsBit(int i) {
@@ -135,10 +139,10 @@ public class solverNet {
 		return bit.bit;
 	}
 
-	public double getBitWeight(int i) {
+	public double[] getBitWeight(int i) {
 		// TODO Auto-generated method stub
 		bitNode bit = bits.get(i);
-		return bit.weights[0];
+		return bit.weights;
 	}
 
 	public void changeNextGates(int[] indexList) {

@@ -20,17 +20,44 @@ public class gateNode extends solverNode{
 			bit = net.bits.get(indexList[i]);
 			bit.addGateIndex(net.gates.size(),i);
 			bits[i] = net.getBitsBit(indexList[i]);
-			
+
 		}
 		weight(true);
 	}
 	@Override
 	void weight(boolean init) {
 		// TODO Auto-generated method stub
-		weights = new double[width];
-		for(int i=0;i<width;i++)
+		weights = new double[width*2];
+		if(init)
 		{
-			weights[i] = net.getBitWeight(i);
+			for(int i=0;i<width;i+=2)
+			{
+				if(bits[i/2]==net.getBitsBit(indexList[i/2]))
+				{
+					weights[i] = net.getBitWeight(indexList[i/2])[0];
+					weights[i+1] = net.getBitWeight(indexList[i/2])[1];
+				}else
+				{
+					weights[i] = net.getBitWeight(indexList[i/2])[1];
+					weights[i+1] = net.getBitWeight(indexList[i/2])[0];
+				}
+
+			}
+		}
+		for(int i=0;i<width;i+=2)
+		{
+			for(int j=0;j<possibleStates.length;j++)
+			{
+				if(possibleStates[j][i/2]==bits[i/2])
+				{
+					weights[i] = weights[i] + net.getBitWeight(indexList[i/2])[0];
+					weights[i+1] = weights[i+1] + net.getBitWeight(indexList[i/2])[1];
+				}else
+				{
+					weights[i] = weights[i] + net.getBitWeight(indexList[i/2])[1];
+					weights[i+1] = weights[i+1] + net.getBitWeight(indexList[i/2])[0];
+				}
+			}
 		}
 	}
 
@@ -38,44 +65,33 @@ public class gateNode extends solverNode{
 	void propagate() {
 		// TODO Auto-generated method stub
 		boolean[] oldBits = bits;
-		double maxWeight = 0;
-		double w;
+		double force = 0;
+		double maxForce = 0;
 		int maxIndex = 0;
-		boolean constantConflict;
 		for(int i=0;i<possibleStates.length;i++)
 		{
-			constantConflict = false;
+			force = 0;
 			for(int j=0;j<width;j++)
 			{
-				if(net.bits.get(indexList[j]).constant&&(net.getBitsBit(indexList[j])!=possibleStates[i][j]))
+				if(possibleStates[i][j] == bits[j])
 				{
-					constantConflict = true;
+					force += weights[2*j] - weights[2*j + 1];
+				}else
+				{
+					force += weights[2*j + 1] - weights[2*j];
 				}
 			}
-			if(!constantConflict)
+			if(force>maxForce)
 			{
-				w = 0;
-				for(int j=0;j<width;j++)
-				{
-					if(net.getBitsBit(indexList[j])==possibleStates[i][j])
-					{
-						w+= weights[j];
-					}else
-					{
-						w += 1-weights[j];
-					}
-				}
-				if(w>maxWeight)
-				{
-					maxIndex = i;
-				}
+				maxIndex = i;
 			}
 		}
 		bits = possibleStates[maxIndex];
 		if(bits!=oldBits)
 		{
+			weight(false);
 			net.changeNextBits(indexList);
 		}
 	}
-	
+
 }
