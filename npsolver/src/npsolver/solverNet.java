@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class solverNet {
 	ArrayList<bitNode> bits;
 	ArrayList<gateNode> gates;
-	int maxChanges = 0;
+	int mostChanges = 0;
 	int[] nextBits;
 	int[] nextGates;
 	int gateLines;
@@ -16,6 +16,7 @@ public class solverNet {
 		double N = puzzle.nmax();
 		double Ndelta = N/2;
 		boolean consistent;
+		boolean stable;
 		boolean lastWasConsistent = false;
 		ProblemFormat lastSolution = puzzle;
 		do
@@ -23,8 +24,6 @@ public class solverNet {
 			if(!started)
 			{
 				puzzle.toNet(this);
-				maxChanges = 2*bits.size() + (int) (Math.ceil(Math.log(bits.size())/Math.log(2))) +1;
-				//assuming that comstraining it does not increase the number of bitnodes
 				nextGates = new int[gates.size()];
 				for(int i=0;i<gates.size();i++)
 				{
@@ -35,6 +34,7 @@ public class solverNet {
 			do
 			{
 				consistent = true;
+				stable = true;
 				nextBits = new int[bits.size()];
 				for(int i=0;i<bits.size();i++)
 				{
@@ -42,7 +42,20 @@ public class solverNet {
 				}
 				for(int i=0;nextGates[i]!= -1;i++)
 				{
-					gates.get(nextGates[i]).propagate();
+					gateNode gate = gates.get(nextGates[i]);
+					double[] oldWeights = gate.weights;
+					gate.propagate();
+					if(gate.weights!=oldWeights)
+					{
+						stable = false;
+					}
+					for(int j=0;j<gate.width;j++)
+					{
+						if(gate.bits[j]!=bits.get(gate.indexList[j]))
+						{
+							consistent = false;
+						}
+					}
 				}
 				nextGates = new int[gates.size()];
 				for(int i=0;i<gates.size();i++)
@@ -52,17 +65,18 @@ public class solverNet {
 				for(int i=0;nextBits[i]!= -1;i++)
 				{
 					bitNode bit1 = bits.get(nextBits[i]);
+					double[] oldWeights = bit1.weights;
 					bit1.propagate();
-					if(bit1.numChanges>maxChanges)
+					if(bit1.weights!=oldWeights)
 					{
-						maxChanges = bit1.numChanges;
+						stable = false;
 					}
-					if(bit1.weights[0]<1)
+					if(bit1.numChanges>mostChanges)
 					{
-						consistent = false;
+						mostChanges = bit1.numChanges;
 					}
 				}
-			}while(!consistent&&maxChanges<gateLines+1);
+			}while(!consistent&& !stable &&(mostChanges<gateLines*2 + 1));
 			if(!consistent)
 			{
 				//if the puzzle has a number to be minimized, nQuantum returns the least amount by which problemformat.number() can change
