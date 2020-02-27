@@ -77,6 +77,11 @@ public class solverNet {
 					}
 				}
 			}while(!consistent&& !stable &&(mostChanges<gateLines*2 + 1));
+			//is the change limit even necessary,
+			//it can maybe be proven that no more than 3*E iterations are necessary
+			//the first E iterations reach all bits,
+			//the next E iterations form all possible associations between them
+			//the next E iterations resolve them by flipping bits along paths of tension
 			if(!consistent)
 			{
 				//if the puzzle has a number to be minimized, nQuantum returns the least amount by which problemformat.number() can change
@@ -158,7 +163,14 @@ public class solverNet {
 		bitNode bit = bits.get(i);
 		return bit.weights;
 	}
-
+	public int getBitCardinality(int i)
+	{
+		return bits.get(i).indexList.length;
+	}
+	public int getGateStateNumber(int i)
+	{
+		return gates.get(i).possibleStates.length;
+	}
 	public void changeNextGates(int[] indexList) {
 		// TODO Auto-generated method stub
 		for(int i=0;i<indexList.length;i+=2)

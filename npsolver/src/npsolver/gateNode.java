@@ -34,14 +34,13 @@ public class gateNode extends solverNode{
 			{
 				if(bits[i/2]==net.getBitsBit(indexList[i/2]))
 				{
-					weights[i] = net.getBitWeight(indexList[i/2])[0];
-					weights[i+1] = net.getBitWeight(indexList[i/2])[1];
+					weights[i] = net.getBitWeight(indexList[i/2])[0]/net.getBitCardinality(indexList[i/2]);
+					weights[i+1] = net.getBitWeight(indexList[i/2])[1]/net.getBitCardinality(indexList[i/2]);
 				}else
 				{
-					weights[i] = net.getBitWeight(indexList[i/2])[1];
-					weights[i+1] = net.getBitWeight(indexList[i/2])[0];
+					weights[i] = net.getBitWeight(indexList[i/2])[1]/net.getBitCardinality(indexList[i/2]);
+					weights[i+1] = net.getBitWeight(indexList[i/2])[0]/net.getBitCardinality(indexList[i/2]);
 				}
-
 			}
 		}
 		for(int i=0;i<width;i+=2)
@@ -50,12 +49,12 @@ public class gateNode extends solverNode{
 			{
 				if(possibleStates[j][i/2]==bits[i/2])
 				{
-					weights[i] = weights[i] + net.getBitWeight(indexList[i/2])[0];
-					weights[i+1] = weights[i+1] + net.getBitWeight(indexList[i/2])[1];
+					weights[i] = weights[i] + net.getBitWeight(indexList[i/2])[0]/net.getBitCardinality(indexList[i/2]);
+					weights[i+1] = weights[i+1] + net.getBitWeight(indexList[i/2])[1]/net.getBitCardinality(indexList[i/2]);
 				}else
 				{
-					weights[i] = weights[i] + net.getBitWeight(indexList[i/2])[1];
-					weights[i+1] = weights[i+1] + net.getBitWeight(indexList[i/2])[0];
+					weights[i] = weights[i] + net.getBitWeight(indexList[i/2])[1]/net.getBitCardinality(indexList[i/2]);
+					weights[i+1] = weights[i+1] + net.getBitWeight(indexList[i/2])[0]/net.getBitCardinality(indexList[i/2]);
 				}
 			}
 		}

@@ -42,12 +42,12 @@ public class bitNode extends solverNode{
 			{
 				if(net.getGateBit(i,i+1)==bit)
 				{
-					w += net.getGateWeight(i,i+1,true);
-					w1 += net.getGateWeight(i,i+1,false);
+					w += net.getGateWeight(indexList[i],indexList[i+1],true)/net.getGateStateNumber(indexList);
+					w1 += net.getGateWeight(indexList[i],indexList[i+1],false)/net.getGateStateNumber(indexList);
 				}else
 				{
-					w += net.getGateWeight(i,i+1,false);
-					w1 += net.getGateWeight(i,i+1,true);
+					w += net.getGateWeight(indexList[i],indexList[i+1],false)/net.getGateStateNumber(indexList);
+					w1 += net.getGateWeight(indexList[i],indexList[i+1],true)/net.getGateStateNumber(indexList);
 				}
 			}
 			double[] w2 = {w,w1};
